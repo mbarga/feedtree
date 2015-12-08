@@ -18,12 +18,14 @@ logger = logging.getLogger(__name__)
 def get_token():
     tokens = settings.db.tokens
     token = tokens.find_one({"id": settings.USER_ID})
-    if token is None:	
-	logger.error("Access token does not exist in DB")
-	#raise Exception("Access token was null")
-	return None
+    if token is None:
+        logger.error("Access token does not exist in DB")
+        # raise Exception("Access token was null")
+        return None
+
     # token exists
     return token['access_token']
+
 
 # feely client initialization
 # https://developer.feedly.com/v3/auth/
@@ -31,12 +33,12 @@ def get_client():
     token = get_token()
     if token is not None:
         try:
-            #test token
+            # test token
             pass
-        #TODO: catch expired token
+        # TODO: catch expired token
         except Exception as e:
             res_refresh_token = FeedlyClient.refresh_access_token(token['refresh_token'])
-            #TODO: test response format?
+            # TODO: test response format?
             new_token = res_refresh_token['access_token']
             tokens = settings.db.tokens
             tokens.update(token, new_token, upsert=True)
@@ -62,7 +64,6 @@ def get_client():
 
 
 class FeedlyClient(object):
-
     def __init__(self, **options):
         self.client_id = options.get('client_id')
         self.client_secret = options.get('client_secret')
@@ -86,7 +87,7 @@ class FeedlyClient(object):
             callback_url,
             scope,
             response_type
-            )
+        )
         return request_url
 
     def get_access_token(self, redirect_uri, code):
@@ -116,26 +117,26 @@ class FeedlyClient(object):
 
     def get_user_subscriptions(self, access_token):
         '''return list of user subscriptions'''
-        headers = {'Authorization': 'OAuth '+access_token}
+        headers = {'Authorization': 'OAuth ' + access_token}
         quest_url = self._get_endpoint('v3/subscriptions')
         res = requests.get(url=quest_url, headers=headers)
         return res.json()
 
     def get_user_categories(self, access_token):
         '''return list of user categories'''
-        headers = {'Authorization': 'OAuth '+access_token}
+        headers = {'Authorization': 'OAuth ' + access_token}
         quest_url = self._get_endpoint('v3/categories')
         res = requests.get(url=quest_url, headers=headers)
         return res.json()
 
     def get_feed_content(self, access_token, streamId, newerThan, continuation, unreadOnly=False):
         '''return contents of a feed'''
-        headers = {'Authorization': 'OAuth '+access_token}
+        headers = {'Authorization': 'OAuth ' + access_token}
         quest_url = self._get_endpoint('v3/streams/contents')
         params = dict(
-            streamId = streamId,
-            unreadOnly = unreadOnly,
-            newerThan = newerThan
+            streamId=streamId,
+            unreadOnly=unreadOnly,
+            newerThan=newerThan
         )
         if continuation is not None:
             params['continuation'] = continuation
