@@ -24,7 +24,7 @@ def auth():
 def callback():
     code = request.args.get('code', '')
     if not code:
-        return 'Authentication failed: param [code] was not returned from API.'
+	return render_template('error.html', message='Authentication failed: param [code] was not returned from API.')
 
     # response of access token
     res_access_token = feedly_client.get_access_token(FEEDLY_REDIRECT_URI, code)
@@ -32,7 +32,7 @@ def callback():
     # user id
     #TODO: render in a clean error template
     if 'errorCode' in res_access_token.keys():
-        return 'Authentication failed: %s(%s)' % (res_access_token['errorCode'], res_access_token['errorMessage'])
+	return render_template('error.html', message='Authentication failed: %s(%s)' % (res_access_token['errorCode'], res_access_token['errorMessage']))
 
     # store token in database
     tokens = db.tokens

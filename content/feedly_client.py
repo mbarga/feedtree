@@ -18,8 +18,11 @@ logger = logging.getLogger(__name__)
 def get_token():
     tokens = settings.db.tokens
     token = tokens.find_one({"id": settings.USER_ID})
-    #if token is None:
-    #    raise Exception("Token retrieved was null")
+    if token is None:	
+	logger.error("Access token does not exist in DB")
+	#raise Exception("Access token was null")
+	return None
+    # token exists
     return token['access_token']
 
 # feely client initialization

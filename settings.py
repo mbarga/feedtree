@@ -9,6 +9,9 @@ client id and secret can be found here:
 https://groups.google.com/forum/#!forum/feedly-cloud
 """
 
+# set python path from env variable
+PYTHONPATH = os.environ["PYTHONPATH"]
+
 # can only redirect to specific URIs - see the forum above
 FEEDLY_REDIRECT_URI = "http://localhost:8080"
 FEEDLY_CLIENT_ID = "sandbox"
