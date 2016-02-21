@@ -1,9 +1,13 @@
-This is the beginning of a small project to bring visualization to streams from the Feedly news aggregator. I have been a fan of newstree.jp which applies a visual tree structure to google news articles. I wanted to accomplish the same thing on my personal news aggregation service.
+This is the beginning of a project to bring visualization to streams from the Feedly news aggregator. I'm a fan of the site newstree.jp which applies a visual tree structure to trending google news articles. I wanted to accomplish the same thing on my personal news feed to gain insights into what I am reading.
 
-- set environment variables PYTHONPATH; FEEDLY_CLIENT_SECRET
-- default looks for mongodb to be installed and running on localhost:27017 (runserver.py will not work)
-- check for the most recent feely sandbox secret (on the forum)
+The initial goal is to setup a visual tree of trending articles/topics on my feed, and additionally have a basic sentiment analysis feature for each feed category.
+
+To get this software running locally:
+- set environment variables PYTHONPATH and FEEDLY_CLIENT_SECRET (check for the most recent secret at https://groups.google.com/forum/#!forum/feedly-cloud)
+- default setting looks for mongodb to be installed and running on localhost:27017 (runserver.py will not start if mongodb not running)
 - start feely_connect.py
-- access localhost:8080/auth and sign in to get the token
+- access localhost:8080/auth and sign in to have the token stored
 
+NOTE: 
+feedly has currently announced a version 2.0 of there API which will release soon. The feedly wrapper will most likely break after this release.
 
