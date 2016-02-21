@@ -3,35 +3,27 @@
 This file connects to feedly through feedly_client.py to fetch feed and article data
 """
 
-from content import feedly_client, token
+from content import feedly_client
 
 import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-#def _load_token():
-    # get from disk
-    # if os.path.isfile(settings.ACCESS_TOKEN_FILE):
-    #     with open(settings.ACCESS_TOKEN_FILE) as f:
-    #         lines = f.readlines()
-    #     access_token = lines[0].strip()
-    #     return access_token
-
-
 class ContentProvider(object):
 
     def __init__(self):
-
         self.feedly = feedly_client
-        self.access_token = token
+
+    def refresh_token(self):
+        feedly_client.refresh_token()
 
     def fetch_categories(self):
         '''
         get user's categories
         '''
         try:
-            user_categories = self.feedly.get_user_categories(self.access_token)
+            user_categories = self.feedly.get_user_categories(self.feedly.token)
             logger.info("Found %s categories: " % str(len(user_categories)))
             return user_categories
         except Exception as e:
@@ -43,7 +35,7 @@ class ContentProvider(object):
         get user's subscription list to check for category names
         '''
         try:
-            user_subscriptions = self.feedly.get_user_subscriptions(self.access_token)
+            user_subscriptions = self.feedly.get_user_subscriptions(self.feedly.token)
             logger.info("Subscriptions: %s" % str(len(user_subscriptions)))
             return user_subscriptions
         except Exception as e:
@@ -56,7 +48,7 @@ class ContentProvider(object):
         '''
         try:
             content = self.feedly.get_feed_content(
-                self.access_token,
+                self.feedly.token,
                 stream_id,
                 newerThan,
                 continuation

@@ -1,15 +1,12 @@
 # -*- coding: UTF-8 -*-
 
+from settings import db
 from flask import Blueprint
 from flask import render_template
-import redis
-
 
 visual = Blueprint('visual', __name__,
                    template_folder='templates',
                    static_folder='static')
-
-db = redis.StrictRedis(host='localhost', port=6379, db=1)
 
 
 @visual.route('/test', methods=['GET'])

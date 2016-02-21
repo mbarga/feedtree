@@ -5,6 +5,8 @@ Client to connect to the feedly API
 credit goes to: https://github.com/zgw21cn/FeedlyClient
 """
 
+# from content import feedly_client
+
 import settings
 import requests
 import json
@@ -17,10 +19,10 @@ logger = logging.getLogger(__name__)
 
 def get_token():
     tokens = settings.db.tokens
+    #TODO: there can be more than one token with USER_ID
     token = tokens.find_one({"id": settings.USER_ID})
     if token is None:
-        logger.error("Access token does not exist in DB")
-        # raise Exception("Access token was null")
+        logger.error("Access token does not exist in DB, please generate a new token")
         return None
 
     # token exists
@@ -31,35 +33,16 @@ def get_token():
 # https://developer.feedly.com/v3/auth/
 def get_client():
     token = get_token()
-    if token is not None:
-        try:
-            # test token
-            pass
-        # TODO: catch expired token
-        except Exception as e:
-            res_refresh_token = FeedlyClient.refresh_access_token(token['refresh_token'])
-            # TODO: test response format?
-            new_token = res_refresh_token['access_token']
-            tokens = settings.db.tokens
-            tokens.update(token, new_token, upsert=True)
-            token = new_token
-            # tokens.update_one(
-            #     {"id": settings.USER_ID},
-            #     {"$set":
-            #         {"access_token": token},
-            #         "$currentDate": {"lastModified": True}
-            #     }
-            # )
-        feedly_client = FeedlyClient(
-            token=token,
-            sandbox=True
-        )
-    else:
-        feedly_client = FeedlyClient(
-            client_id=settings.FEEDLY_CLIENT_ID,
-            client_secret=settings.FEEDLY_CLIENT_SECRET,
-            sandbox=True
-        )
+    if token is None:
+        raise Exception("Token does not exist in DB")
+
+    feedly_client = FeedlyClient(
+        client_id=settings.FEEDLY_CLIENT_ID,
+        client_secret=settings.FEEDLY_CLIENT_SECRET,
+        token=token,
+        sandbox=True
+    )
+
     return feedly_client
 
 
@@ -114,6 +97,20 @@ class FeedlyClient(object):
         quest_url = self._get_endpoint('v3/auth/token')
         res = requests.post(url=quest_url, params=params)
         return res.json()
+
+    def refresh_token(self):
+        tokens = settings.db.tokens
+        token = tokens.find_one({"id": settings.USER_ID})
+        if token is None:
+            logger.error("Access token does not exist in DB, please generate a new token")
+            return None
+        res_refresh_token = self.refresh_access_token(token['refresh_token'])
+        if "errorMessage" in res_refresh_token:
+            raise Exception(res_refresh_token["errorMessage"])
+        # TODO: test response format?
+        tokens = settings.db.tokens
+        tokens.update(token, res_refresh_token, upsert=True)
+        return res_refresh_token['access_token']
 
     def get_user_subscriptions(self, access_token):
         '''return list of user subscriptions'''

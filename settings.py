@@ -28,4 +28,4 @@ USER_ID = "d2eb5e88-3736-40ad-870c-e6b831480e8b"
 mongo = MongoClient('localhost', 27017)
 db = mongo.development
 # redis initialization
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=1)
+# redis_client = redis.StrictRedis(host='localhost', port=6379, db=1)
