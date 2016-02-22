@@ -61,8 +61,13 @@ if __name__ == "__main__":
            subscriptions = fetcher.fetch_feeds()
         categories = fetcher.fetch_categories()
         categoriesdb = db.categories
-        for category in categories:
-            category_id = categoriesdb.insert_one(category).inserted_id
+        # for category in categories:
+            # category_id = categoriesdb.update(key, category, {upsert:true})
+            # category_id = categoriesdb.insert_one(category).inserted_id
+            # key = {'key':'va`lue'}
+            # data = {'key2':'value2', 'key3':'value3'};
+            # coll.update(key, data, {upsert:true});
+
         stream_ids = [s['id'] for s in categories]
     except Exception as e:
         logger.error("Could not fetch content: " + e.message)
